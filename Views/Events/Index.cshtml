@@ -1,0 +1,190 @@
+@model AgencyFlow.ViewModels.EventsIndexViewModel
+@{
+    ViewData["Title"] = "My Events";
+}
+
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">My Events</h1>
+    <a href="@Url.Action("Create", "Events")" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+        <i class="bi bi-plus-circle fa-sm text-white-50 me-1"></i> Add New Event
+    </a>
+</div>
+
+<ul class="nav nav-tabs mb-4 border-bottom-0" id="eventsTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active fw-bold border-0 shadow-sm rounded-top px-4" style="background-color: var(--body-bg); color: var(--primary-color);" id="list-tab" data-bs-toggle="tab" data-bs-target="#list-view" type="button" role="tab" aria-controls="list-view" aria-selected="true"><i class="bi bi-list-ul me-2"></i>List View</button>
+  </li>
+  <li class="nav-item ms-2" role="presentation">
+    <button class="nav-link fw-bold border-0 shadow-sm rounded-top px-4" style="background-color: var(--body-bg); color: var(--primary-color);" id="calendar-tab" data-bs-toggle="tab" data-bs-target="#calendar-view" type="button" role="tab" aria-controls="calendar-view" aria-selected="false"><i class="bi bi-calendar-month me-2"></i>Calendar View</button>
+  </li>
+</ul>
+
+<div class="tab-content" id="eventsTabContent">
+  <!-- List View Tab -->
+  <div class="tab-pane fade show active" id="list-view" role="tabpanel" aria-labelledby="list-tab">
+    <div class="card shadow mb-4 border-0">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-white border-bottom">
+            <h6 class="m-0 fw-bold text-primary">Events List</h6>
+            <div class="input-group w-25">
+                <input type="text" class="form-control" placeholder="Search events...">
+                <button class="btn btn-primary" type="button"><i class="bi bi-search"></i></button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered border-light" width="100%" cellspacing="0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Title</th>
+                            <th>Date & Time</th>
+                            <th>Location</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Events != null && Model.Events.Any())
+                        {
+                            @foreach (var item in Model.Events)
+                            {
+                                <tr>
+                                    <td class="align-middle fw-bold">@item.Title</td>
+                                    <td class="align-middle">@item.DateDisplay</td>
+                                    <td class="align-middle"><i class="bi bi-geo-alt text-muted me-1"></i>@item.Location</td>
+                                    <td class="align-middle">@item.AssignedRole</td>
+                                    <td class="align-middle">
+                                        <span class="badge @(item.Status == "Completed" ? "bg-success" : (item.Status == "Upcoming" ? "bg-warning" : "bg-primary"))">
+                                            @item.Status
+                                        </span>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <div class="d-flex justify-content-center gap-1">
+                                            <a href="@Url.Action("Details", new { id = item.EventId })" class="btn btn-sm btn-outline-primary" title="View"><i class="bi bi-eye"></i></a>
+                                            <a href="@Url.Action("Edit", new { id = item.EventId })" class="btn btn-sm btn-outline-warning" title="Edit"><i class="bi bi-pencil"></i></a>
+                                            <form id="deleteForm-@item.EventId" action="@Url.Action("Delete", new { id = item.EventId })" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" onclick="confirmDelete(@item.EventId)"><i class="bi bi-trash"></i></button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">No events assigned yet.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Calendar View Tab -->
+  <div class="tab-pane fade" id="calendar-view" role="tabpanel" aria-labelledby="calendar-tab">
+    <div class="card shadow mb-4 border-0">
+        <div class="card-header py-3 bg-white d-flex flex-row align-items-center justify-content-between border-bottom">
+            <h6 class="m-0 fw-bold text-primary">Monthly Schedule</h6>
+            <div class="d-flex align-items-center gap-3 small">
+                <span class="badge" style="background-color: #0dcaf0;">Upcoming</span>
+                <span class="badge" style="background-color: #ffc107;">Ongoing</span>
+                <span class="badge" style="background-color: #198754;">Completed</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="calendar"></div>
+        </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- FullCalendar CSS and JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+    <style>
+        /* Tab Styling */
+        .nav-tabs .nav-link:not(.active) { color: #858796 !important; background-color: transparent !important; box-shadow: none !important;}
+        .nav-tabs .nav-link.active { border-bottom: 3px solid var(--primary-color) !important; }
+
+        /* Custom FullCalendar Styling for SaaS look */
+        .fc-theme-standard .fc-scrollgrid { border-color: #e3e6f0; }
+        .fc-theme-standard th { border-color: #e3e6f0; padding: 10px 0; background-color: #f8f9fc; color: #858796; text-transform: uppercase; font-size: 0.8rem; font-weight: 600;}
+        .fc-theme-standard td { border-color: #e3e6f0; }
+        .fc-day-today { background-color: rgba(78, 115, 223, 0.05) !important; }
+        .fc-event { border: none; padding: 2px 4px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; transition: transform 0.2s ease;}
+        .fc-event:hover { transform: scale(1.02); }
+        .fc .fc-button-primary { background-color: #4e73df; border-color: #4e73df; }
+        .fc .fc-button-primary:hover { background-color: #2e59d9; border-color: #2653d4; }
+        .fc .fc-button-primary:not(:disabled).fc-button-active, .fc .fc-button-primary:not(:disabled):active { background-color: #2653d4; border-color: #2653d4; }
+
+        /* Dark Mode Compatibility */
+        [data-bs-theme="dark"] .fc-theme-standard .fc-scrollgrid { border-color: #2b2b40; }
+        [data-bs-theme="dark"] .fc-theme-standard th { background-color: #151521; border-color: #2b2b40; color: #a1a5b7;}
+        [data-bs-theme="dark"] .fc-theme-standard td { border-color: #2b2b40; }
+        [data-bs-theme="dark"] .fc-day-today { background-color: rgba(255, 255, 255, 0.03) !important; }
+        [data-bs-theme="dark"] .fc-daygrid-day-number { color: #e4e6eb; text-decoration: none;}
+        [data-bs-theme="dark"] .fc-col-header-cell-cushion { color: #a1a5b7; text-decoration: none;}
+        [data-bs-theme="dark"] .fc-toolbar-title { color: #ffffff; }
+    </style>
+
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This will also remove any earnings connected to this event. You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e74a3b',
+                cancelButtonColor: '#858796',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('deleteForm-' + id).submit();
+                }
+            })
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                themeSystem: 'standard',
+                events: '@Url.Action("GetCalendarData", "Events")',
+                eventClick: function(info) {
+                    info.jsEvent.preventDefault(); // Don't let the browser navigate normally
+                    if (info.event.url) {
+                        window.location.href = info.event.url;
+                    }
+                },
+                height: 700,
+                firstDay: 1, // Start on Monday
+                displayEventTime: true,
+                eventTimeFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    meridiem: false,
+                    hour12: false
+                }
+            });
+
+            // Render calendar only when the tab is fully shown to prevent sizing issues
+            var calendarTab = document.getElementById('calendar-tab');
+            calendarTab.addEventListener('shown.bs.tab', function (event) {
+                calendar.render();
+            });
+        });
+    </script>
+}

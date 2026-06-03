@@ -1,0 +1,279 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Unisex Theme (Default) */
+    --primary-color: #4e73df;
+    --primary-hover: #2e59d9;
+    --primary-border-hover: #2653d4;
+    --primary-rgba-light: rgba(78, 115, 223, 0.4);
+    --primary-rgba-medium: rgba(78, 115, 223, 0.5);
+    --primary-rgba-focus: rgba(78, 115, 223, 0.25);
+    --primary-rgba-hoverbg: rgba(78, 115, 223, 0.04);
+    
+    /* Sidebar */
+    --sidebar-bg: #1a202c;
+    --sidebar-text: rgba(255, 255, 255, 0.6);
+    --sidebar-text-hover: #ffffff;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.1);
+    --sidebar-brand: #ffffff;
+    
+    /* Body Background */
+    --body-bg: #f8f9fc;
+}
+
+[data-theme="pink"] {
+    /* Soft Pink Theme */
+    --primary-color: #ff6699; /* True soft pink */
+    --primary-hover: #ff3377;
+    --primary-border-hover: #cc0044;
+    --primary-rgba-light: rgba(255, 102, 153, 0.4);
+    --primary-rgba-medium: rgba(255, 102, 153, 0.5);
+    --primary-rgba-focus: rgba(255, 102, 153, 0.25);
+    --primary-rgba-hoverbg: rgba(255, 102, 153, 0.04);
+    
+    /* Sidebar */
+    --sidebar-bg: #ffe6f0; /* Very soft pastel pink */
+    --sidebar-text: #660029; /* Dark pink text for readability */
+    --sidebar-text-hover: #99003d;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.6);
+    --sidebar-brand: #4d001f;
+    
+    /* Body Background */
+    --body-bg: #fff5f8; /* Very subtle pinkish white */
+}
+
+[data-theme="blue"] {
+    /* Soft Blue Theme */
+    --primary-color: #3399ff; /* True soft blue */
+    --primary-hover: #0077e6;
+    --primary-border-hover: #0059b3;
+    --primary-rgba-light: rgba(51, 153, 255, 0.4);
+    --primary-rgba-medium: rgba(51, 153, 255, 0.5);
+    --primary-rgba-focus: rgba(51, 153, 255, 0.25);
+    --primary-rgba-hoverbg: rgba(51, 153, 255, 0.04);
+    
+    /* Sidebar */
+    --sidebar-bg: #e6f2ff; /* Very soft pastel blue */
+    --sidebar-text: #003366; /* Dark blue text */
+    --sidebar-text-hover: #004d99;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.6);
+    --sidebar-brand: #001a33;
+    
+    /* Body Background */
+    --body-bg: #f5f9ff; /* Very subtle bluish white */
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #495057;
+    background-color: var(--body-bg); /* Dynamically changes with theme */
+    transition: background-color 0.3s ease;
+}
+
+/* Override Bootstrap classes to use our variables */
+.text-primary { color: var(--primary-color) !important; }
+.bg-primary { background-color: var(--primary-color) !important; }
+
+/* Card Enhancements for SaaS Look */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: none !important;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1) !important;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.5rem 2rem 0 rgba(58, 59, 69, 0.15) !important;
+}
+
+/* Sidebar Customizations */
+.sidebar {
+    background-color: var(--sidebar-bg) !important;
+    transition: background-color 0.3s ease, width 0.3s ease;
+}
+
+.sidebar .sidebar-brand {
+    color: var(--sidebar-brand) !important;
+}
+
+.sidebar .nav-item .nav-link {
+    color: var(--sidebar-text) !important;
+    transition: color 0.2s ease, background-color 0.2s ease, padding-left 0.2s ease;
+    border-radius: 0.35rem;
+    margin: 0 0.5rem;
+}
+
+.sidebar .nav-item .nav-link:hover {
+    color: var(--sidebar-text-hover) !important;
+    background-color: var(--sidebar-hover-bg);
+    padding-left: 1.5rem !important; /* Subtle shift effect on hover */
+}
+
+/* Button Refinements */
+.btn {
+    border-radius: 0.35rem;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0.125rem 0.25rem 0 var(--primary-rgba-light);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-border-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 0.25rem 0.5rem 0 var(--primary-rgba-medium);
+}
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+/* Table Enhancements */
+.table-hover tbody tr {
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--primary-rgba-hoverbg);
+}
+
+.table thead th {
+    border-bottom: 2px solid #e3e6f0;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    color: #858796;
+    background-color: #f8f9fc;
+}
+
+/* Badge Tweaks */
+.badge {
+    padding: 0.4em 0.6em;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border-radius: 0.35rem;
+}
+
+/* Form Inputs (Floating Labels) Polish */
+.form-control {
+    border-radius: 0.35rem;
+    border: 1px solid #d1d3e2;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem var(--primary-rgba-focus);
+    border-color: var(--primary-color);
+}
+
+/* Custom Scrollbar for a premium feel */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+ 
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1; 
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8; 
+}
+
+/* ---------------------------------------------------
+   DARK MODE OVERRIDES
+----------------------------------------------------- */
+[data-bs-theme="dark"] {
+    --body-bg: #151521 !important;
+    --sidebar-bg: #11111a !important;
+    --sidebar-text: #a1a5b7 !important;
+    --sidebar-text-hover: #ffffff !important;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.05) !important;
+    --sidebar-brand: #ffffff !important;
+}
+
+[data-bs-theme="dark"] body {
+    background-color: var(--body-bg) !important;
+    color: #e4e6eb !important;
+}
+
+[data-bs-theme="dark"] .bg-white, 
+[data-bs-theme="dark"] .bg-light {
+    background-color: #1e1e2d !important;
+}
+
+[data-bs-theme="dark"] .card, 
+[data-bs-theme="dark"] .card-header {
+    background-color: #1e1e2d !important;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-bs-theme="dark"] .card-header {
+    border-bottom: 1px solid #2b2b40 !important;
+}
+
+[data-bs-theme="dark"] .text-gray-800,
+[data-bs-theme="dark"] .text-dark {
+    color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .text-muted {
+    color: #a1a5b7 !important;
+}
+
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select,
+[data-bs-theme="dark"] .input-group-text {
+    background-color: #151521 !important;
+    border-color: #2b2b40 !important;
+    color: #e4e6eb !important;
+}
+
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus {
+    background-color: #1e1e2d !important;
+    border-color: var(--primary-color) !important;
+}
+
+[data-bs-theme="dark"] .table thead th {
+    background-color: #151521 !important;
+    border-bottom-color: #2b2b40 !important;
+    color: #a1a5b7 !important;
+}
+
+[data-bs-theme="dark"] .table td {
+    border-bottom-color: #2b2b40 !important;
+    color: #e4e6eb !important;
+}
+
+[data-bs-theme="dark"] .table-hover tbody tr:hover {
+    background-color: #2b2b40 !important;
+}
+
+[data-bs-theme="dark"] hr {
+    border-color: #2b2b40 !important;
+}
+
+[data-bs-theme="dark"] .list-group-item {
+    background-color: #1e1e2d !important;
+    border-color: #2b2b40 !important;
+    color: #e4e6eb !important;
+}
+
+[data-bs-theme="dark"] .sticky-footer {
+    background-color: #1e1e2d !important;
+}

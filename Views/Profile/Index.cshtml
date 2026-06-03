@@ -1,0 +1,152 @@
+@model AgencyFlow.ViewModels.ProfileIndexViewModel
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow border-0 h-100">
+            <div class="card-body text-center p-5">
+                <img src="@(string.IsNullOrEmpty(Model?.ProfilePictureUrl) ? "/images/default-avatar.png" : Model.ProfilePictureUrl)" 
+                     alt="Profile Avatar" 
+                     class="rounded-circle img-fluid shadow-sm mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                <h4 class="fw-bold mb-1">@(Model?.FullName ?? "Unknown User")</h4>
+                <p class="text-muted mb-4"><i class="bi bi-geo-alt me-1"></i>@(Model?.City ?? "City not set")</p>
+                <a href="@Url.Action("Edit")" class="btn btn-outline-primary px-4 rounded-pill">Edit Profile</a>
+            </div>
+            <ul class="list-group list-group-flush border-top">
+
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                    <span class="text-muted">Email</span>
+                    <span class="fw-bold">@(Model?.Email ?? "N/A")</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="col-lg-8 mb-4">
+        <div class="card shadow border-0 h-100">
+            <div class="card-header bg-white py-4 border-0">
+                <h5 class="m-0 fw-bold text-primary">Account Details</h5>
+            </div>
+            <div class="card-body p-4">
+
+                
+                <p class="text-muted">You can edit your personal information by clicking the Edit Profile button on the left.</p>
+                
+                <hr class="my-4" />
+                <h5 class="fw-bold text-primary mb-3"><i class="bi bi-shield-lock me-2"></i>Security Settings</h5>
+                
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success shadow-sm border-0"><i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]</div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger shadow-sm border-0"><i class="bi bi-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]</div>
+                }
+
+                <form asp-action="ChangePassword" method="post" class="mb-4">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label asp-for="ChangePassword.CurrentPassword" class="form-label fw-bold"></label>
+                            <input asp-for="ChangePassword.CurrentPassword" class="form-control bg-light" />
+                            <span asp-validation-for="ChangePassword.CurrentPassword" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ChangePassword.NewPassword" class="form-label fw-bold"></label>
+                            <input asp-for="ChangePassword.NewPassword" class="form-control bg-light" />
+                            <span asp-validation-for="ChangePassword.NewPassword" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ChangePassword.ConfirmPassword" class="form-label fw-bold"></label>
+                            <input asp-for="ChangePassword.ConfirmPassword" class="form-control bg-light" />
+                            <span asp-validation-for="ChangePassword.ConfirmPassword" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary shadow-sm px-4"><i class="bi bi-key me-2"></i>Update Password</button>
+                </form>
+
+                <hr class="my-4" />
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-primary m-0"><i class="bi bi-palette me-2"></i>Appearance</h5>
+                    <div class="form-check form-switch fs-5">
+                        <input class="form-check-input" type="checkbox" role="switch" id="darkModeToggle">
+                        <label class="form-check-label fs-6 ms-2" for="darkModeToggle"><i class="bi bi-moon-stars"></i> Dark Mode</label>
+                    </div>
+                </div>
+                <p class="text-muted small mb-3">Personalize your dashboard experience. Pick a color theme below.</p>
+                
+                <div class="d-flex gap-3">
+                    <button class="btn border shadow-sm theme-selector p-3 d-flex flex-column align-items-center rounded-3" data-theme-value="default">
+                        <div class="rounded-circle mb-2 shadow-sm" style="width:35px; height:35px; background-color: #4e73df;"></div>
+                        <span class="small fw-bold text-muted">Unisex</span>
+                    </button>
+                    <button class="btn border shadow-sm theme-selector p-3 d-flex flex-column align-items-center rounded-3" data-theme-value="pink">
+                        <div class="rounded-circle mb-2 shadow-sm" style="width:35px; height:35px; background-color: #d63384;"></div>
+                        <span class="small fw-bold text-muted">Soft Pink</span>
+                    </button>
+                    <button class="btn border shadow-sm theme-selector p-3 d-flex flex-column align-items-center rounded-3" data-theme-value="blue">
+                        <div class="rounded-circle mb-2 shadow-sm" style="width:35px; height:35px; background-color: #0dcaf0;"></div>
+                        <span class="small fw-bold text-muted">Soft Blue</span>
+                    </button>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const selectors = document.querySelectorAll('.theme-selector');
+                        const currentTheme = localStorage.getItem('agencyflow_theme') || 'default';
+                        
+                        // Dark Mode Logic
+                        const darkModeToggle = document.getElementById('darkModeToggle');
+                        const isDarkMode = localStorage.getItem('agencyflow_dark_mode') === 'true';
+                        
+                        if (isDarkMode) {
+                            darkModeToggle.checked = true;
+                        }
+
+                        darkModeToggle.addEventListener('change', function() {
+                            if (this.checked) {
+                                document.documentElement.setAttribute('data-bs-theme', 'dark');
+                                localStorage.setItem('agencyflow_dark_mode', 'true');
+                            } else {
+                                document.documentElement.setAttribute('data-bs-theme', 'light');
+                                localStorage.setItem('agencyflow_dark_mode', 'false');
+                            }
+                        });
+                        
+                        selectors.forEach(s => {
+                            if (s.dataset.themeValue === currentTheme) {
+                                s.classList.add('border-primary', 'bg-light');
+                                s.querySelector('span').classList.replace('text-muted', 'text-primary');
+                            }
+                            
+                            s.addEventListener('click', function() {
+                                const theme = this.dataset.themeValue;
+                                localStorage.setItem('agencyflow_theme', theme);
+                                
+                                if (theme === 'default') {
+                                    document.documentElement.removeAttribute('data-theme');
+                                } else {
+                                    document.documentElement.setAttribute('data-theme', theme);
+                                }
+                                
+                                selectors.forEach(btn => {
+                                    btn.classList.remove('border-primary', 'bg-light');
+                                    btn.querySelector('span').classList.replace('text-primary', 'text-muted');
+                                });
+                                this.classList.add('border-primary', 'bg-light');
+                                this.querySelector('span').classList.replace('text-muted', 'text-primary');
+                            });
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

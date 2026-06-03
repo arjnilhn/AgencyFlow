@@ -1,0 +1,81 @@
+@model AgencyFlow.ViewModels.WorkHoursViewModel
+@{
+    ViewData["Title"] = "Work Hours";
+}
+
+<div class="row mb-4">
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-start border-4 border-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-success text-uppercase mb-1">Total Approved Hours</div>
+                        <div class="h5 mb-0 fw-bold text-gray-800">@(Model?.Summary?.TotalApprovedHours ?? 0) h</div>
+                    </div>
+                    <div class="col-auto"><i class="bi bi-check-circle fs-2 text-muted"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-start border-4 border-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-warning text-uppercase mb-1">Pending Approval</div>
+                        <div class="h5 mb-0 fw-bold text-gray-800">@(Model?.Summary?.PendingApprovalHours ?? 0) h</div>
+                    </div>
+                    <div class="col-auto"><i class="bi bi-clock-history fs-2 text-muted"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 bg-white">
+        <h6 class="m-0 fw-bold text-primary">Time Logs</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered" width="100%" cellspacing="0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Event</th>
+                        <th>Role</th>
+                        <th>Clock In</th>
+                        <th>Clock Out</th>
+                        <th>Approved Hours</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.WorkLogs != null && Model.WorkLogs.Any())
+                    {
+                        @foreach (var log in Model.WorkLogs)
+                        {
+                            <tr>
+                                <td class="align-middle fw-bold">@log.EventTitle</td>
+                                <td class="align-middle">@log.AssignedRole</td>
+                                <td class="align-middle">@log.ClockIn.ToString("MMM dd, HH:mm")</td>
+                                <td class="align-middle">@(log.ClockOut?.ToString("MMM dd, HH:mm") ?? "-")</td>
+                                <td class="align-middle fw-bold">@(log.ApprovedHours?.ToString() ?? "-")</td>
+                                <td class="align-middle">
+                                    <span class="badge @(log.Status == "Approved" ? "bg-success" : (log.Status == "Rejected" ? "bg-danger" : "bg-warning"))">
+                                        @log.Status
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No time logs recorded.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

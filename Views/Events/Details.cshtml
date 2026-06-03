@@ -1,0 +1,79 @@
+@model AgencyFlow.ViewModels.EventDetailsViewModel
+@{
+    ViewData["Title"] = "Event Details";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4 border-0">
+            <div class="card-header bg-primary text-white py-4 border-0">
+                <h4 class="m-0 fw-bold">@(Model?.Title ?? "Event Title")</h4>
+                <p class="m-0 text-white-50 mt-1"><i class="bi bi-geo-alt me-1"></i>@(Model?.Location ?? "N/A")</p>
+            </div>
+            <div class="card-body p-5">
+                <div class="row mb-4">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        <div class="text-xs fw-bold text-muted text-uppercase mb-1">Date & Time</div>
+                        <div class="h6 mb-0 fw-bold text-dark">@(Model?.DateDisplay ?? "N/A")</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-xs fw-bold text-muted text-uppercase mb-1">Status</div>
+                        <div class="h6 mb-0">
+                            <span class="badge @(Model?.Status == "Completed" ? "bg-success" : "bg-warning") fs-6">@(Model?.Status ?? "N/A")</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr class="my-4" />
+                
+                <div class="mb-4">
+                    <div class="text-xs fw-bold text-muted text-uppercase mb-2">Description</div>
+                    <p class="text-dark">@(Model?.Description ?? "No description provided.")</p>
+                </div>
+                
+                <hr class="my-4" />
+
+                <div class="row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        <div class="text-xs fw-bold text-muted text-uppercase mb-1">Assigned Role</div>
+                        <div class="h6 mb-0 fw-bold text-primary">@(Model?.AssignedRole ?? "N/A")</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-xs fw-bold text-muted text-uppercase mb-1">Event Fee</div>
+                        <div class="h6 mb-0 fw-bold text-success">@(Model?.Currency ?? "$")@(Model?.EventFee ?? 0)</div>
+                    </div>
+                </div>
+
+                <div class="mt-5 d-flex justify-content-center gap-2">
+                    <a href="@Url.Action("Index")" class="btn btn-secondary px-4 py-2 fw-bold shadow-sm">Back to Events</a>
+                    <a href="@Url.Action("Edit", new { id = Model?.EventId })" class="btn btn-warning px-4 py-2 fw-bold shadow-sm text-dark"><i class="bi bi-pencil me-1"></i>Edit Event</a>
+                    <form id="deleteForm-@(Model?.EventId)" action="@Url.Action("Delete", new { id = Model?.EventId })" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="button" class="btn btn-danger px-4 py-2 fw-bold shadow-sm" onclick="confirmDelete(@(Model?.EventId))"><i class="bi bi-trash me-1"></i>Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This will also remove any earnings connected to this event. You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e74a3b',
+                cancelButtonColor: '#858796',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('deleteForm-' + id).submit();
+                }
+            })
+        }
+    </script>
+}

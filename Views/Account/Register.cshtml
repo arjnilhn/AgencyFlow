@@ -1,0 +1,67 @@
+@model AgencyFlow.ViewModels.RegisterViewModel
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Register";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0 rounded-lg mt-5">
+            <div class="card-header bg-white text-center py-4">
+                <div class="d-flex justify-content-center align-items-center my-2">
+                    <img src="~/images/agencyflow_logo.png" alt="AgencyFlow Logo" class="rounded-circle shadow me-2" style="width: 45px; height: 45px; object-fit: cover;" />
+                    <h3 class="font-weight-light mb-0 text-primary fw-bold">AgencyFlow</h3>
+                </div>
+                <p class="text-muted small mb-0">Create your staff account</p>
+            </div>
+            <div class="card-body p-5">
+                <form asp-action="Register" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3 mb-md-0">
+                                <input asp-for="FirstName" class="form-control" placeholder="Enter your first name" />
+                                <label asp-for="FirstName">First name</label>
+                                <span asp-validation-for="FirstName" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input asp-for="LastName" class="form-control" placeholder="Enter your last name" />
+                                <label asp-for="LastName">Last name</label>
+                                <span asp-validation-for="LastName" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="Email" class="form-control" placeholder="name@example.com" />
+                        <label asp-for="Email">Email address</label>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3 mb-md-0">
+                                <input asp-for="Password" class="form-control" placeholder="Create a password" />
+                                <label asp-for="Password">Password</label>
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3 mb-md-0">
+                                <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm password" />
+                                <label asp-for="ConfirmPassword">Confirm Password</label>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 mb-0 d-grid">
+                        <button class="btn btn-primary btn-lg" type="submit">Create Account</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center py-3 bg-white">
+                <div class="small"><a href="@Url.Action("Login")" class="text-decoration-none">Have an account? Go to login</a></div>
+            </div>
+        </div>
+    </div>
+</div>

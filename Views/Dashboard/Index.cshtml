@@ -1,0 +1,219 @@
+@model AgencyFlow.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<!-- Summary Cards Row -->
+<div class="row">
+    <!-- Total Earnings Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-start border-4 border-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-primary text-uppercase mb-1">Total Earnings</div>
+                        @if (Model?.Summary?.TotalEarningsByCurrency.Any() == true)
+                        {
+                            foreach (var item in Model.Summary.TotalEarningsByCurrency)
+                            {
+                                <div class="h5 mb-0 fw-bold text-gray-800">@item.Key @item.Value</div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="h5 mb-0 fw-bold text-gray-800">$0</div>
+                        }
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-currency-dollar fs-2 text-muted"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Earnings Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-start border-4 border-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-warning text-uppercase mb-1">Pending</div>
+                        @if (Model?.Summary?.PendingEarningsByCurrency.Any() == true)
+                        {
+                            foreach (var item in Model.Summary.PendingEarningsByCurrency)
+                            {
+                                <div class="h5 mb-0 fw-bold text-gray-800">@item.Key @item.Value</div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="h5 mb-0 fw-bold text-gray-800">$0</div>
+                        }
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-hourglass-split fs-2 text-muted"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Events Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-start border-4 border-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-success text-uppercase mb-1">Upcoming Events</div>
+                        <div class="h5 mb-0 fw-bold text-gray-800">@(Model?.Summary?.UpcomingEventsCount ?? 0)</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-calendar-check fs-2 text-muted"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hours Worked Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-start border-4 border-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-info text-uppercase mb-1">Hours This Month</div>
+                        <div class="h5 mb-0 fw-bold text-gray-800">@(Model?.Summary?.HoursWorkedThisMonth ?? 0) h</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-clock-history fs-2 text-muted"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Chart.js Widget -->
+    <div class="col-xl-8 col-lg-7">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-white">
+                <h6 class="m-0 fw-bold text-primary">Earnings Overview</h6>
+                <form method="get" action="@Url.Action("Index", "Dashboard")" class="d-inline-flex align-items-center m-0">
+                    <label class="me-2 fw-bold text-gray-800 small mb-0">Year:</label>
+                    <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
+                        @foreach (var y in Model?.AvailableYears ?? new List<int>())
+                        {
+                            if (y == Model?.SelectedYear)
+                            {
+                                <option value="@y" selected>@y</option>
+                            }
+                            else
+                            {
+                                <option value="@y">@y</option>
+                            }
+                        }
+                    </select>
+                </form>
+            </div>
+            <div class="card-body">
+                <div class="chart-area" style="height: 300px;">
+                    <canvas id="myAreaChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Events List Widget -->
+    <div class="col-xl-4 col-lg-5">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 bg-white">
+                <h6 class="m-0 fw-bold text-primary">Upcoming Events</h6>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    @if (Model != null && Model.UpcomingEvents != null && Model.UpcomingEvents.Any())
+                    {
+                        @foreach (var evt in Model.UpcomingEvents)
+                        {
+                            <li class="list-group-item p-3">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1 fw-bold">@evt.Title</h6>
+                                    <span class="badge bg-success">@evt.Status</span>
+                                </div>
+                                <p class="mb-1 small text-muted"><i class="bi bi-geo-alt me-1"></i>@evt.Location</p>
+                                <small class="text-muted"><i class="bi bi-clock me-1"></i>@evt.StartDate.ToString("MMM dd, yyyy HH:mm")</small>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="list-group-item p-4 text-muted text-center">
+                            <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+                            No upcoming events.
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var ctx = document.getElementById("myAreaChart");
+        if(ctx) {
+            // Get CSS variables for dynamic theme colors
+            var style = getComputedStyle(document.body);
+            var primary = style.getPropertyValue('--primary-color').trim() || '#4e73df';
+            var primaryFocus = style.getPropertyValue('--primary-rgba-focus').trim() || 'rgba(78, 115, 223, 0.25)';
+
+            var datasets = @Html.Raw(Json.Serialize(Model?.EarningsChart?.Datasets ?? new List<AgencyFlow.ViewModels.ChartDatasetDto>()));
+            
+            // Make the first dataset use dynamic theme colors
+            if(datasets.length > 0) {
+                datasets[0].backgroundColor = primaryFocus;
+                datasets[0].borderColor = primary;
+                datasets[0].pointBackgroundColor = primary;
+                datasets[0].pointBorderColor = primary;
+                datasets[0].pointHoverBackgroundColor = primary;
+                datasets[0].pointHoverBorderColor = primary;
+            }
+
+            var chartDatasets = datasets.map(function(ds) {
+                return {
+                    label: ds.label,
+                    lineTension: 0.3,
+                    backgroundColor: ds.backgroundColor || "rgba(0,0,0,0)",
+                    borderColor: ds.borderColor,
+                    pointRadius: 3,
+                    pointBackgroundColor: ds.pointBackgroundColor || ds.borderColor,
+                    pointBorderColor: ds.pointBorderColor || ds.borderColor,
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: ds.pointHoverBackgroundColor || ds.borderColor,
+                    pointHoverBorderColor: ds.pointHoverBorderColor || ds.borderColor,
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                    data: ds.data
+                };
+            });
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: @Html.Raw(Json.Serialize(Model?.EarningsChart?.Labels ?? new List<string>())),
+                    datasets: chartDatasets,
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { borderDash: [2, 2] } }
+                    },
+                    plugins: { legend: { display: true } }
+                }
+            });
+        }
+    </script>
+}

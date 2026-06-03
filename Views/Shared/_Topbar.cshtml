@@ -1,0 +1,55 @@
+@using Microsoft.AspNetCore.Identity
+@using AgencyFlow.Models
+@using AgencyFlow.Data
+@inject UserManager<User> UserManager
+@inject ApplicationDbContext DbContext
+
+@{
+    var userId = UserManager.GetUserId(User);
+    var profile = userId != null ? DbContext.UserProfiles.FirstOrDefault(p => p.UserId == userId) : null;
+    var displayName = profile != null ? $"{profile.FirstName} {profile.LastName}" : User.Identity?.Name ?? "User";
+    var currentDate = DateTime.Now.ToString("dd MMMM yyyy, dddd", new System.Globalization.CultureInfo("en-US"));
+}
+<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow-sm px-4">
+    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle me-3 text-dark">
+        <i class="bi bi-list fs-4"></i>
+    </button>
+    
+    <div class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100">
+        <h5 class="m-0 text-muted">@ViewData["Title"]</h5>
+    </div>
+
+    <ul class="navbar-nav ms-auto">
+        <!-- Güncel Tarih -->
+        <li class="nav-item d-flex align-items-center me-4">
+            <span class="text-primary fw-medium fs-6">@currentDate</span>
+        </li>
+
+        <li class="nav-item dropdown no-arrow">
+            <a class="nav-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="me-2 d-none d-lg-inline text-gray-600 small">@displayName</span>
+                @if(profile != null && !string.IsNullOrEmpty(profile.ProfilePicture))
+                {
+                    <img src="@profile.ProfilePicture" class="img-profile rounded-circle shadow-sm" style="width:32px; height:32px; object-fit:cover;" />
+                }
+                else
+                {
+                    <i class="bi bi-person-circle fs-4 text-secondary"></i>
+                }
+            </a>
+            <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in border-0" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="@Url.Action("Index", "Profile")">
+                    <i class="bi bi-person fa-sm fa-fw me-2 text-gray-400"></i>
+                    Profile
+                </a>
+                <div class="dropdown-divider"></div>
+                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                    <button type="submit" class="dropdown-item text-danger">
+                        <i class="bi bi-box-arrow-right fa-sm fa-fw me-2 text-danger"></i>
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </li>
+    </ul>
+</nav>
