@@ -9,5 +9,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 COPY --from=build /app/out .
 # Veritabanını build aşamasından runtime aşamasına kopyalıyoruz
-COPY --from=build /app/agencyflow.db . 
+COPY agencyflow.db .
 ENTRYPOINT ["dotnet", "AgencyFlow.dll"]

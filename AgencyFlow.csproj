@@ -19,10 +19,5 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="agencyflow.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
 
 </Project>
